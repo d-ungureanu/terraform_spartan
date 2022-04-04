@@ -270,7 +270,7 @@ resource "aws_instance" "devops106_terraform_dungureanu_webserver_app_tf" {
         type = "ssh"
         user = "ubuntu"
         host = self.public_ip
-        private_key = file("/home/vagrant/.ssh/devops106_dungureanu.pem")
+        private_key = file(var.private_key_file_path_var)
     }
 
     provisioner "local-exec" {
@@ -278,7 +278,7 @@ resource "aws_instance" "devops106_terraform_dungureanu_webserver_app_tf" {
     }
 
     provisioner "file" {
-        source      = "/home/vagrant/host/spartan_terraform/database.config"
+        source      = "/home/vagrant/host/terraform_spartan/database.config"
         destination = "/home/ubuntu/database.config"
     }
 
@@ -319,7 +319,7 @@ resource "aws_instance" "devops106_terraform_dungureanu_webserver_db_tf" {
         type        = "ssh"
         user        = "ubuntu"
         host        = self.public_ip
-        private_key = file("/home/vagrant/.ssh/devops106_dungureanu.pem")
+        private_key = file(var.private_key_file_path_var)
     }
 
     provisioner "remote-exec" {
