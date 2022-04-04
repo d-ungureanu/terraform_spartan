@@ -262,8 +262,12 @@ resource "aws_instance" "devops106_terraform_dungureanu_webserver_app_tf" {
     subnet_id = aws_subnet.devops106_dungureanu_terraform_subnet_app_webserver_tf.id
     associate_public_ip_address = true
 
+    # index starts at zero.
+    count = 2
+
+    # use counter to give it uniques tag name
     tags ={
-        Name ="devops106_terraform_dungureanu_app_webserver"
+        Name ="devops106_terraform_dungureanu_app_webserver_${count.index}"
     }
 
     connection {
