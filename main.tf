@@ -1,5 +1,5 @@
 provider "aws"{
-    region = "eu-west-1"
+    region = var.region_var
 }
 
 
@@ -12,7 +12,7 @@ resource "aws_vpc" "devops106_dungureanu_terraform_vpc_tf"{
 
 
 resource "aws_subnet" "devops106_dungureanu_terraform_subnet_app_webserver_tf"{
-    vpc_id = aws_vpc.devops106_dungureanu_terraform_vpc_tf.id
+    vpc_id = local.vpc_id_var
     cidr_block = "10.201.1.0/24"
     tags ={
         Name = "devops106_dungureanu_app_subnet"
@@ -21,7 +21,7 @@ resource "aws_subnet" "devops106_dungureanu_terraform_subnet_app_webserver_tf"{
 
 
 resource "aws_subnet" "devops106_dungureanu_terraform_subnet_db_webserver_tf"{
-    vpc_id = aws_vpc.devops106_dungureanu_terraform_vpc_tf.id
+    vpc_id = local.vpc_id_var
     cidr_block = "10.201.2.0/24"
     tags ={
     Name = "devops106_dungureanu_db_subnet"
@@ -30,7 +30,7 @@ resource "aws_subnet" "devops106_dungureanu_terraform_subnet_db_webserver_tf"{
 
 
 resource "aws_internet_gateway" "devops106_dungureanu_terraform_ig_tf"{
-    vpc_id = aws_vpc.devops106_dungureanu_terraform_vpc_tf.id
+    vpc_id = local.vpc_id_var
     tags = {
     Name = "devops106_dungureanu_terraform_ig"
     }
@@ -38,7 +38,7 @@ resource "aws_internet_gateway" "devops106_dungureanu_terraform_ig_tf"{
 
 
 resource "aws_route_table" "devops106_dungureanu_terraform_rt_public_tf"{
-    vpc_id = aws_vpc.devops106_dungureanu_terraform_vpc_tf.id
+    vpc_id = local.vpc_id_var
 
     route{
         cidr_block = "0.0.0.0/0"
@@ -64,7 +64,7 @@ resource "aws_route_table_association" "devops106_dungureanu_terraform_rt_assoc_
 
 
 resource "aws_network_acl" "devops106_dungureanu_terraform_nacl_app_public_tf"{
-    vpc_id = aws_vpc.devops106_dungureanu_terraform_vpc_tf.id
+    vpc_id = local.vpc_id_var
 
     ingress {
         rule_no = 100
@@ -129,7 +129,7 @@ resource "aws_network_acl" "devops106_dungureanu_terraform_nacl_app_public_tf"{
 }
 
 resource "aws_network_acl" "devops106_dungureanu_terraform_nacl_public_db_tf"{
-    vpc_id = aws_vpc.devops106_dungureanu_terraform_vpc_tf.id
+    vpc_id = local.vpc_id_var
 
     ingress {
         rule_no = 100
@@ -194,7 +194,7 @@ resource "aws_network_acl" "devops106_dungureanu_terraform_nacl_public_db_tf"{
 
 resource "aws_security_group" "devops106_terraform_dungureanu_sg_app_webserver_tf"{
     name = "devops106_terraform_dungureanu_app_sg"
-    vpc_id = aws_vpc.devops106_dungureanu_terraform_vpc_tf.id
+    vpc_id = local.vpc_id_var
 
     ingress {
         from_port = 22
@@ -225,8 +225,8 @@ resource "aws_security_group" "devops106_terraform_dungureanu_sg_app_webserver_t
 
 
 resource "aws_security_group" "devops106_terraform_dungureanu_sg_db_webserver_tf"{
-    name = "devops106_terraform_dungureanu__db_sg"
-    vpc_id = aws_vpc.devops106_dungureanu_terraform_vpc_tf.id
+    name = "devops106_terraform_dungureanu_db_sg"
+    vpc_id = local.vpc_id_var
 
     ingress{
         from_port = 22
@@ -254,9 +254,9 @@ resource "aws_security_group" "devops106_terraform_dungureanu_sg_db_webserver_tf
 
 
 resource "aws_instance" "devops106_terraform_dungureanu_webserver_app_tf" {
-    ami = "ami-08ca3fed11864d6bb"
-    instance_type = "t2.micro"
-    key_name = "devops106_dungureanu"
+    ami = var.ubuntu_20_04_ami_id_var
+    instance_type = var.instance_type_var
+    key_name = var.key_name_var
     vpc_security_group_ids = [aws_security_group.devops106_terraform_dungureanu_sg_app_webserver_tf.id]
 
     subnet_id = aws_subnet.devops106_dungureanu_terraform_subnet_app_webserver_tf.id
@@ -303,9 +303,9 @@ resource "aws_instance" "devops106_terraform_dungureanu_webserver_app_tf" {
 }
 
 resource "aws_instance" "devops106_terraform_dungureanu_webserver_db_tf" {
-    ami                    = "ami-08ca3fed11864d6bb"
-    instance_type          = "t2.micro"
-    key_name               = "devops106_dungureanu"
+    ami                    = var.ubuntu_20_04_ami_id_var
+    instance_type          = var.instance_type_var
+    key_name               = var.key_name_var
     vpc_security_group_ids = [aws_security_group.devops106_terraform_dungureanu_sg_db_webserver_tf.id]
 
     subnet_id                   = aws_subnet.devops106_dungureanu_terraform_subnet_db_webserver_tf.id
