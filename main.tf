@@ -192,8 +192,8 @@ resource "aws_network_acl" "devops106_dungureanu_terraform_nacl_public_db_tf"{
 }
 
 
-resource "aws_security_group" "devops106_terraform_dungureanu_sg_app_webserver_tf"{
-    name = "devops106_terraform_dungureanu_app_sg"
+resource "aws_security_group" "devops106_dungureanu_terraform_sg_app_webserver_tf"{
+    name = "devops106_dungureanu_terraform_app_sg"
     vpc_id = local.vpc_id_var
 
     ingress {
@@ -224,8 +224,8 @@ resource "aws_security_group" "devops106_terraform_dungureanu_sg_app_webserver_t
 }
 
 
-resource "aws_security_group" "devops106_terraform_dungureanu_sg_db_webserver_tf"{
-    name = "devops106_terraform_dungureanu_db_sg"
+resource "aws_security_group" "devops106_dungureanu_terraform_sg_db_webserver_tf"{
+    name = "devops106_dungureanu_terraform_db_sg"
     vpc_id = local.vpc_id_var
 
     ingress{
@@ -248,16 +248,16 @@ resource "aws_security_group" "devops106_terraform_dungureanu_sg_db_webserver_tf
     }
 
     tags ={
-    Name = "devops106_terraform_dungureanu_sg_db_webserver"
+    Name = "devops106_dungureanu_terraform_sg_db_webserver"
     }
 }
 
 
-resource "aws_instance" "devops106_terraform_dungureanu_webserver_app_tf" {
+resource "aws_instance" "devops106_dungureanu_terraform_webserver_app_tf" {
     ami = var.ubuntu_20_04_ami_id_var
     instance_type = var.instance_type_var
     key_name = var.key_name_var
-    vpc_security_group_ids = [aws_security_group.devops106_terraform_dungureanu_sg_app_webserver_tf.id]
+    vpc_security_group_ids = [aws_security_group.devops106_dungureanu_terraform_sg_app_webserver_tf.id]
 
     subnet_id = aws_subnet.devops106_dungureanu_terraform_subnet_app_webserver_tf.id
     associate_public_ip_address = true
@@ -267,7 +267,7 @@ resource "aws_instance" "devops106_terraform_dungureanu_webserver_app_tf" {
 
     # use counter to give it uniques tag name
     tags ={
-        Name ="devops106_terraform_dungureanu_app_webserver_${count.index}"
+        Name ="devops106_dungureanu_terraform_app_webserver_${count.index}"
     }
 
     connection {
@@ -278,7 +278,7 @@ resource "aws_instance" "devops106_terraform_dungureanu_webserver_app_tf" {
     }
 
     provisioner "local-exec" {
-        command = "echo mongodb://${aws_instance.devops106_terraform_dungureanu_webserver_db_tf.public_ip}:27017 > database.config"
+        command = "echo mongodb://${aws_instance.devops106_dungureanu_terraform_webserver_db_tf.public_ip}:27017 > database.config"
     }
 
     provisioner "file" {
@@ -304,17 +304,17 @@ resource "aws_instance" "devops106_terraform_dungureanu_webserver_app_tf" {
     }
 }
 
-resource "aws_instance" "devops106_terraform_dungureanu_webserver_db_tf" {
+resource "aws_instance" "devops106_dungureanu_terraform_webserver_db_tf" {
     ami                    = var.ubuntu_20_04_ami_id_var
     instance_type          = var.instance_type_var
     key_name               = var.key_name_var
-    vpc_security_group_ids = [aws_security_group.devops106_terraform_dungureanu_sg_db_webserver_tf.id]
+    vpc_security_group_ids = [aws_security_group.devops106_dungureanu_terraform_sg_db_webserver_tf.id]
 
     subnet_id                   = aws_subnet.devops106_dungureanu_terraform_subnet_db_webserver_tf.id
     associate_public_ip_address = true
 
     tags = {
-        Name = "devops106_terraform_dungureanu_db_webserver"
+        Name = "devops106_dungureanu_terraform_db_webserver"
     }
 
     connection {
