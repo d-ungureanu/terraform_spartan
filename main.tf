@@ -355,10 +355,18 @@ resource "aws_instance" "devops106_dungureanu_terraform_webserver_db_tf" {
   */
 }
 
+resource "aws_route53_zone" "devops106_dungureanu_terraform_dns_zone_tf" {
+  name = "dungureanu.devops106"
+
+  vpc {
+    vpc_id = local.vpc_id_var
+  }
+}
+
 resource "aws_route53_record" "devops106_dungureanu_terraform_dns_db_tf" {
   name    = "db"
   type    = "A"
-  zone_id = "Z049405314IQ8GVYDAR19"
+  zone_id = aws_route53_zone.devops106_dungureanu_terraform_dns_zone_tf.zone_id
   ttl     = "30"
   records = [aws_instance.devops106_dungureanu_terraform_webserver_db_tf.public_ip]
 }
