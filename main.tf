@@ -284,35 +284,6 @@ resource "aws_instance" "devops106_dungureanu_terraform_webserver_app_tf" {
     host        = self.public_ip
     private_key = file(var.private_key_file_path_var)
   }
-
-  #  provisioner "local-exec" {
-  #    command = "sudo echo mongodb://${local.mongodb_ip_var}:27017 > database.config"
-  #  }
-  #
-  #  provisioner "file" {
-  #    source      = "./database.config"
-  #    destination = "/home/ubuntu/database.config"
-  #  }
-
-  /*
-    provisioner "file" {
-      source      = "./init-scripts/docker-install.sh"
-      destination = "/home/ubuntu/docker-install.sh"
-    }
-
-    provisioner "remote-exec" {
-      inline = [
-        "bash /home/ubuntu/docker-install.sh"
-      ]
-    }
-  */
-
-
-  #  provisioner "remote-exec" {
-  #    inline = [
-  #      "docker run -d -p 5000:5000 leiungureanu/spartan_project_vagrant"
-  #    ]
-  #  }
 }
 
 data "template_file" "db_init" {
@@ -340,19 +311,6 @@ resource "aws_instance" "devops106_dungureanu_terraform_webserver_db_tf" {
     host        = self.public_ip
     private_key = file(var.private_key_file_path_var)
   }
-  /*
-    provisioner "file" {
-      source      = "./init-scripts/mongodb-install.sh"
-      destination = "/home/ubuntu/mongodb-install.sh"
-    }
-
-    provisioner "remote-exec" {
-      inline = [
-        "bash /home/ubuntu/mongodb-install.sh"
-      ]
-
-    }
-  */
 }
 
 resource "aws_route53_zone" "devops106_dungureanu_terraform_dns_zone_tf" {
