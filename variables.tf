@@ -26,4 +26,5 @@ variable "region_var" {
 # VPC name extraction from terraform
 locals {
   vpc_id_var = aws_vpc.devops106_dungureanu_terraform_vpc_tf.id
+  mongodb_ip_var = aws_instance.devops106_dungureanu_terraform_webserver_db_tf.public_ip
 }

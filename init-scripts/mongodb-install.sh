@@ -4,5 +4,5 @@ sudo apt update
 sudo apt install -y mongodb-org
 sudo systemctl start mongod.service
 sudo systemctl enable mongod
-sudo sed -i \"s/bindIp: 127.0.0.1/bindIp: 0.0.0.0/\" /etc/mongod.conf
+sudo sed -i "s/bindIp: 127.0.0.1/bindIp: 0.0.0.0/" /etc/mongod.conf
 sudo systemctl restart mongod.service
