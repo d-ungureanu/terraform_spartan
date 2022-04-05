@@ -4,10 +4,10 @@ provider "aws" {
 
 
 resource "aws_vpc" "devops106_dungureanu_terraform_vpc_tf" {
-  cidr_block = "10.203.0.0/16"
-  enable_dns_support = true
+  cidr_block           = "10.203.0.0/16"
+  enable_dns_support   = true
   enable_dns_hostnames = true
-  tags       = {
+  tags                 = {
     Name = "devops106_dungureanu_terraform_vpc"
   }
 }
@@ -255,7 +255,7 @@ resource "aws_security_group" "devops106_dungureanu_terraform_sg_db_webserver_tf
 }
 
 
-data  "template_file" "app_init" {
+data "template_file" "app_init" {
   template = file("./init-scripts/docker-install.sh")
 }
 
@@ -285,37 +285,37 @@ resource "aws_instance" "devops106_dungureanu_terraform_webserver_app_tf" {
     private_key = file(var.private_key_file_path_var)
   }
 
-#  provisioner "local-exec" {
-#    command = "sudo echo mongodb://${local.mongodb_ip_var}:27017 > database.config"
-#  }
-#
-#  provisioner "file" {
-#    source      = "./database.config"
-#    destination = "/home/ubuntu/database.config"
-#  }
+  #  provisioner "local-exec" {
+  #    command = "sudo echo mongodb://${local.mongodb_ip_var}:27017 > database.config"
+  #  }
+  #
+  #  provisioner "file" {
+  #    source      = "./database.config"
+  #    destination = "/home/ubuntu/database.config"
+  #  }
 
-/*
-  provisioner "file" {
-    source      = "./init-scripts/docker-install.sh"
-    destination = "/home/ubuntu/docker-install.sh"
-  }
+  /*
+    provisioner "file" {
+      source      = "./init-scripts/docker-install.sh"
+      destination = "/home/ubuntu/docker-install.sh"
+    }
 
-  provisioner "remote-exec" {
-    inline = [
-      "bash /home/ubuntu/docker-install.sh"
-    ]
-  }
-*/
+    provisioner "remote-exec" {
+      inline = [
+        "bash /home/ubuntu/docker-install.sh"
+      ]
+    }
+  */
 
 
-#  provisioner "remote-exec" {
-#    inline = [
-#      "docker run -d -p 5000:5000 leiungureanu/spartan_project_vagrant"
-#    ]
-#  }
+  #  provisioner "remote-exec" {
+  #    inline = [
+  #      "docker run -d -p 5000:5000 leiungureanu/spartan_project_vagrant"
+  #    ]
+  #  }
 }
 
-data  "template_file" "db_init" {
+data "template_file" "db_init" {
   template = file("./init-scripts/mongodb-install.sh")
 }
 
@@ -340,17 +340,25 @@ resource "aws_instance" "devops106_dungureanu_terraform_webserver_db_tf" {
     host        = self.public_ip
     private_key = file(var.private_key_file_path_var)
   }
-/*
-  provisioner "file" {
-    source      = "./init-scripts/mongodb-install.sh"
-    destination = "/home/ubuntu/mongodb-install.sh"
-  }
+  /*
+    provisioner "file" {
+      source      = "./init-scripts/mongodb-install.sh"
+      destination = "/home/ubuntu/mongodb-install.sh"
+    }
 
-  provisioner "remote-exec" {
-    inline = [
-      "bash /home/ubuntu/mongodb-install.sh"
-    ]
+    provisioner "remote-exec" {
+      inline = [
+        "bash /home/ubuntu/mongodb-install.sh"
+      ]
 
-  }
-*/
+    }
+  */
+}
+
+resource "aws_route53_record" "devops106_dungureanu_terraform_dns_db_tf" {
+  name    = "db"
+  type    = "A"
+  zone_id = "Z049405314IQ8GVYDAR19"
+  ttl     = "30"
+  records = [aws_instance.devops106_dungureanu_terraform_webserver_db_tf.public_ip]
 }
