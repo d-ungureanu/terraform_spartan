@@ -5,4 +5,42 @@
   tasks:
     - name: Install aptitude using apt
       apt: name=aptitude state=latest update_cache=yes force_apt_get=yes
-      
+    
+    - name: Installing all required packages
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: ['apt-transport-https', 'ca-certificates', 'curl', 'gnupg', 'lsb-release', 'python3-pip', 'virtualenv', 'python3-setuptools']
+
+    - name: Adding GPG key
+      apt_key:
+        url: https://download.docker.com/linux/ubuntu/gpg
+        state: present
+
+    - name: Adding Docker repo
+      apt_repository:
+        repo: deb https://download.docker.com/linux/ubuntu focal stable
+        state: present
+
+    - name: Installing Docker
+      apt: name={{ item }} state=latest update_cache=yes
+      loop: ['docker-ce', 'docker-ce-cli', 'containerd.io']
+
+    - name: Installing python library for Docker
+      pip:
+        name: docker
+    
+    - name: Adding current user to docker group
+      user:
+        name: ubuntu
+        groups: docker
+        append: yes
+
+    - name: Running a Docker container
+      docker_container:
+        name: hello_world_container
+        image: hello-world
+        state: started
+        container_default_behavior: compatibility
+        published_ports:
+          - "5000:5000"
+        volumes:
+          - /home/ubuntu/log:/log
