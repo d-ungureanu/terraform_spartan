@@ -269,9 +269,9 @@ resource "aws_instance" "devops106_dungureanu_terraform_webserver_app_tf" {
   associate_public_ip_address = true
 
   # index starts at zero.
-  count = 2
+  count = 3
 
-  user_data = data.template_file.app_init.rendered
+  #user_data = data.template_file.app_init.rendered
 
   # use counter to give it uniques tag name
   tags = {
