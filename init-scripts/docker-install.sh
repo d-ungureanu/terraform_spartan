@@ -15,4 +15,4 @@ $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev
 sudo apt-get update
 sudo apt-get install -y docker-ce docker-ce-cli containerd.io
 sudo usermod -a -G docker ubuntu
-sudo docker run -d -p 5000:5000 leiungureanu/spartan_project_vagrant
+sudo docker run -d -p 5000:5000 leiungureanu/spartan_project_vagrant:latest
