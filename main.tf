@@ -269,7 +269,7 @@ resource "aws_instance" "devops106_dungureanu_terraform_webserver_app_tf" {
   associate_public_ip_address = true
 
   # index starts at zero.
-  count = 1
+  count = 2
 
   user_data = data.template_file.app_init.rendered
 
