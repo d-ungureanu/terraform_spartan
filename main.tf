@@ -3,69 +3,69 @@ provider "aws" {
 }
 
 
-resource "aws_vpc" "devops106_dungureanu_terraform_vpc_tf" {
+resource "aws_vpc" "devops106_terraform_daniel_vpc_tf" {
   cidr_block           = "10.203.0.0/16"
   enable_dns_support   = true
   enable_dns_hostnames = true
   tags                 = {
-    Name = "devops106_dungureanu_terraform_vpc"
+    Name = "devops106_terraform_daniel_vpc"
   }
 }
 
 
-resource "aws_subnet" "devops106_dungureanu_terraform_subnet_app_webserver_tf" {
+resource "aws_subnet" "devops106_terraform_daniel_subnet_app_webserver_tf" {
   vpc_id     = local.vpc_id_var
   cidr_block = "10.203.1.0/24"
   tags       = {
-    Name = "devops106_dungureanu_app_subnet"
+    Name = "devops106_terraform_daniel_app_subnet"
   }
 }
 
 
-resource "aws_subnet" "devops106_dungureanu_terraform_subnet_db_webserver_tf" {
+resource "aws_subnet" "devops106_terraform_daniel_subnet_db_webserver_tf" {
   vpc_id     = local.vpc_id_var
   cidr_block = "10.203.2.0/24"
   tags       = {
-    Name = "devops106_dungureanu_db_subnet"
+    Name = "devops106_terraform_daniel_db_subnet"
   }
 }
 
 
-resource "aws_internet_gateway" "devops106_dungureanu_terraform_ig_tf" {
+resource "aws_internet_gateway" "devops106_terraform_daniel_ig_tf" {
   vpc_id = local.vpc_id_var
   tags   = {
-    Name = "devops106_dungureanu_terraform_ig"
+    Name = "devops106_terraform_daniel_ig"
   }
 }
 
 
-resource "aws_route_table" "devops106_dungureanu_terraform_rt_public_tf" {
+resource "aws_route_table" "devops106_terraform_daniel_rt_public_tf" {
   vpc_id = local.vpc_id_var
 
   route {
     cidr_block = "0.0.0.0/0"
-    gateway_id = aws_internet_gateway.devops106_dungureanu_terraform_ig_tf.id
+    gateway_id = aws_internet_gateway.devops106_terraform_daniel_ig_tf.id
 
   }
 
   tags = {
-    Name = "devops106_dungureanu_terraform_rt_public"
+    Name = "devops106_terraform_daniel_rt_public"
   }
 }
 
 
-resource "aws_route_table_association" "devops106_dungureanu_terraform_rt_assoc_app_public_webserver_tf" {
-  subnet_id      = aws_subnet.devops106_dungureanu_terraform_subnet_app_webserver_tf.id
-  route_table_id = aws_route_table.devops106_dungureanu_terraform_rt_public_tf.id
+resource "aws_route_table_association" "devops106_terraform_daniel_rt_assoc_app_public_webserver_tf" {
+  subnet_id      = aws_subnet.devops106_terraform_daniel_subnet_app_webserver_tf.id
+  route_table_id = aws_route_table.devops106_terraform_daniel_rt_public_tf.id
 }
 
-resource "aws_route_table_association" "devops106_dungureanu_terraform_rt_assoc_db_public_webserver_tf" {
-  subnet_id      = aws_subnet.devops106_dungureanu_terraform_subnet_db_webserver_tf.id
-  route_table_id = aws_route_table.devops106_dungureanu_terraform_rt_public_tf.id
+resource "aws_route_table_association" "devops106_terraform_daniel_rt_assoc_db_public_webserver_tf" {
+  subnet_id      = aws_subnet.devops106_terraform_daniel_subnet_db_webserver_tf.id
+  route_table_id = aws_route_table.devops106_terraform_daniel_rt_public_tf.id
 }
 
 
-resource "aws_network_acl" "devops106_dungureanu_terraform_nacl_app_public_tf" {
+resource "aws_network_acl" "devops106_terraform_daniel_nacl_app_public_tf" {
   vpc_id = local.vpc_id_var
 
   ingress {
@@ -81,6 +81,15 @@ resource "aws_network_acl" "devops106_dungureanu_terraform_nacl_app_public_tf" {
     rule_no    = 200
     from_port  = 27017
     to_port    = 27017
+    cidr_block = "0.0.0.0/0"
+    protocol   = "tcp"
+    action     = "allow"
+  }
+
+  ingress {
+    rule_no    = 300
+    from_port  = 80
+    to_port    = 80
     cidr_block = "0.0.0.0/0"
     protocol   = "tcp"
     action     = "allow"
@@ -123,14 +132,14 @@ resource "aws_network_acl" "devops106_dungureanu_terraform_nacl_app_public_tf" {
     action     = "allow"
   }
 
-  subnet_ids = [aws_subnet.devops106_dungureanu_terraform_subnet_app_webserver_tf.id]
+  subnet_ids = [aws_subnet.devops106_terraform_daniel_subnet_app_webserver_tf.id]
 
   tags = {
-    Name = "devops106_dungureanu_terraform_nacl_app_public"
+    Name = "devops106_terraform_daniel_nacl_app_public"
   }
 }
 
-resource "aws_network_acl" "devops106_dungureanu_terraform_nacl_public_db_tf" {
+resource "aws_network_acl" "devops106_terraform_daniel_nacl_public_db_tf" {
   vpc_id = local.vpc_id_var
 
   ingress {
@@ -186,21 +195,28 @@ resource "aws_network_acl" "devops106_dungureanu_terraform_nacl_public_db_tf" {
     protocol   = "tcp"
     action     = "allow"
   }
-  subnet_ids = [aws_subnet.devops106_dungureanu_terraform_subnet_db_webserver_tf.id]
+  subnet_ids = [aws_subnet.devops106_terraform_daniel_subnet_db_webserver_tf.id]
 
   tags = {
-    Name = "devops106_dungureanu_terraform_nacl_db_public"
+    Name = "devops106_terraform_daniel_nacl_db_public"
   }
 }
 
 
-resource "aws_security_group" "devops106_dungureanu_terraform_sg_app_webserver_tf" {
-  name   = "devops106_dungureanu_terraform_app_sg"
+resource "aws_security_group" "devops106_terraform_daniel_sg_app_webserver_tf" {
+  name   = "devops106_terraform_daniel_app_sg"
   vpc_id = local.vpc_id_var
 
   ingress {
     from_port   = 22
     to_port     = 22
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+
+  ingress {
+    from_port   = 80
+    to_port     = 80
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
@@ -221,13 +237,13 @@ resource "aws_security_group" "devops106_dungureanu_terraform_sg_app_webserver_t
 
 
   tags = {
-    Name = "devops106_dungureanu_terraform_sg_app_webserver"
+    Name = "devops106_terraform_daniel_sg_app_webserver"
   }
 }
 
 
-resource "aws_security_group" "devops106_dungureanu_terraform_sg_db_webserver_tf" {
-  name   = "devops106_dungureanu_terraform_db_sg"
+resource "aws_security_group" "devops106_terraform_daniel_sg_db_webserver_tf" {
+  name   = "devops106_terraform_daniel_db_sg"
   vpc_id = local.vpc_id_var
 
   ingress {
@@ -250,32 +266,59 @@ resource "aws_security_group" "devops106_dungureanu_terraform_sg_db_webserver_tf
   }
 
   tags = {
-    Name = "devops106_dungureanu_terraform_sg_db_webserver"
+    Name = "devops106_terraform_daniel_sg_db_webserver"
   }
 }
 
+data "template_file" "proxy_init" {
+  template = file("./init-scripts/nginx-install.sh")
+}
+
+resource "aws_instance" "devops106_terraform_daniel_proxy_server_tf" {
+  ami                    = var.ubuntu_20_04_ami_id_var
+  instance_type          = var.instance_type_var
+  key_name               = var.key_name_var
+  vpc_security_group_ids = [aws_security_group.devops106_terraform_daniel_sg_app_webserver_tf.id]
+
+  subnet_id                   = aws_subnet.devops106_terraform_daniel_subnet_app_webserver_tf.id
+  associate_public_ip_address = true
+
+
+  user_data = data.template_file.proxy_init.rendered
+
+  tags = {
+    Name = "devops106_terraform_daniel_proxy_server"
+  }
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    host        = self.public_ip
+    private_key = file(var.private_key_file_path_var)
+  }
+}
 
 data "template_file" "app_init" {
   template = file("./init-scripts/docker-install.sh")
 }
 
-resource "aws_instance" "devops106_dungureanu_terraform_webserver_app_tf" {
+resource "aws_instance" "devops106_terraform_daniel_webserver_app_tf" {
   ami                    = var.ubuntu_20_04_ami_id_var
   instance_type          = var.instance_type_var
   key_name               = var.key_name_var
-  vpc_security_group_ids = [aws_security_group.devops106_dungureanu_terraform_sg_app_webserver_tf.id]
+  vpc_security_group_ids = [aws_security_group.devops106_terraform_daniel_sg_app_webserver_tf.id]
 
-  subnet_id                   = aws_subnet.devops106_dungureanu_terraform_subnet_app_webserver_tf.id
+  subnet_id                   = aws_subnet.devops106_terraform_daniel_subnet_app_webserver_tf.id
   associate_public_ip_address = true
 
   # index starts at zero.
   count = 3
 
-  #user_data = data.template_file.app_init.rendered
+  user_data = data.template_file.app_init.rendered
 
   # use counter to give it uniques tag name
   tags = {
-    Name = "devops106_dungureanu_terraform_app_webserver_${count.index}"
+    Name = "devops106_terraform_daniel_app_webserver_${count.index}"
   }
 
   connection {
@@ -290,19 +333,19 @@ data "template_file" "db_init" {
   template = file("./init-scripts/mongodb-install.sh")
 }
 
-resource "aws_instance" "devops106_dungureanu_terraform_webserver_db_tf" {
+resource "aws_instance" "devops106_terraform_daniel_webserver_db_tf" {
   ami                    = var.ubuntu_20_04_ami_id_var
   instance_type          = var.instance_type_var
   key_name               = var.key_name_var
-  vpc_security_group_ids = [aws_security_group.devops106_dungureanu_terraform_sg_db_webserver_tf.id]
+  vpc_security_group_ids = [aws_security_group.devops106_terraform_daniel_sg_db_webserver_tf.id]
 
-  subnet_id                   = aws_subnet.devops106_dungureanu_terraform_subnet_db_webserver_tf.id
+  subnet_id                   = aws_subnet.devops106_terraform_daniel_subnet_db_webserver_tf.id
   associate_public_ip_address = true
 
   user_data = data.template_file.db_init.rendered
 
   tags = {
-    Name = "devops106_dungureanu_terraform_db_webserver"
+    Name = "devops106_terraform_daniel_db_webserver"
   }
 
   connection {
@@ -313,7 +356,7 @@ resource "aws_instance" "devops106_dungureanu_terraform_webserver_db_tf" {
   }
 }
 
-resource "aws_route53_zone" "devops106_dungureanu_terraform_dns_zone_tf" {
+resource "aws_route53_zone" "devops106_terraform_daniel_dns_zone_tf" {
   name = "dungureanu.devops106"
 
   vpc {
@@ -321,10 +364,10 @@ resource "aws_route53_zone" "devops106_dungureanu_terraform_dns_zone_tf" {
   }
 }
 
-resource "aws_route53_record" "devops106_dungureanu_terraform_dns_db_tf" {
+resource "aws_route53_record" "devops106_terraform_daniel_dns_db_tf" {
   name    = "db"
   type    = "A"
-  zone_id = aws_route53_zone.devops106_dungureanu_terraform_dns_zone_tf.zone_id
+  zone_id = aws_route53_zone.devops106_terraform_daniel_dns_zone_tf.zone_id
   ttl     = "30"
-  records = [aws_instance.devops106_dungureanu_terraform_webserver_db_tf.public_ip]
+  records = [aws_instance.devops106_terraform_daniel_webserver_db_tf.public_ip]
 }
