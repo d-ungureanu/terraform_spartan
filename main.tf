@@ -338,7 +338,7 @@ resource "aws_security_group" "devops106_terraform_daniel_sg_db_webserver_tf" {
 }
 
 resource "aws_security_group" "devops106_terraform_daniel_sg_proxy_server_tf" {
-  name   = "devops106_terraform_daniel_app_sg"
+  name   = "devops106_terraform_daniel_proxy_sg"
   vpc_id = local.vpc_id_var
 
   ingress {
