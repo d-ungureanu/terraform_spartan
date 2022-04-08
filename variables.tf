@@ -27,4 +27,5 @@ variable "region_var" {
 locals {
   vpc_id_var = aws_vpc.devops106_terraform_daniel_vpc_tf.id
   mongodb_ip_var = aws_instance.devops106_terraform_daniel_webserver_db_tf.public_ip
+  mongodb_private_ip_var = aws_instance.devops106_terraform_daniel_db_webserver.private_ip
 }
