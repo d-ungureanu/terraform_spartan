@@ -7,3 +7,4 @@ sudo systemctl enable nginx
 
 sudo mv /etc/nginx/sites-available/default .
 sudo rm /etc/nginx/sites-enabled/default
+sudo echo test line 1 > test.sh
