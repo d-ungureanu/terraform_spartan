@@ -291,92 +291,6 @@ resource "aws_security_group" "devops106_terraform_daniel_sg_db_webserver_tf" {
 }
 
 
-#data "template_file" "proxy_init" {
-#  template = file("./init-scripts/nginx-install.sh")
-#}
-#
-#resource "aws_instance" "devops106_terraform_daniel_proxy_server_tf" {
-#  ami                    = var.ubuntu_20_04_ami_id_var
-#  instance_type          = var.instance_type_var
-#  key_name               = var.key_name_var
-#  vpc_security_group_ids = [aws_security_group.devops106_terraform_daniel_sg_app_webserver_tf.id]
-#
-#  subnet_id                   = aws_subnet.devops106_terraform_daniel_subnet_app_webserver_tf.id
-#  associate_public_ip_address = true
-#
-#
-#  user_data = data.template_file.proxy_init.rendered
-#
-#  tags = {
-#    Name = "devops106_terraform_daniel_proxy_server"
-#  }
-#
-#  connection {
-#    type        = "ssh"
-#    user        = "ubuntu"
-#    host        = self.public_ip
-#    private_key = file(var.private_key_file_path_var)
-#  }
-#}
-
-
-data "template_file" "app_init" {
-  template = file("./init-scripts/docker-install.sh")
-}
-
-resource "aws_instance" "devops106_terraform_daniel_webserver_app_tf" {
-  ami                    = var.ubuntu_20_04_docker_ami_id_var
-  instance_type          = var.instance_type_var
-  key_name               = var.key_name_var
-  vpc_security_group_ids = [aws_security_group.devops106_terraform_daniel_sg_app_webserver_tf.id]
-
-  subnet_id                   = aws_subnet.devops106_terraform_daniel_subnet_app_webserver_tf.id
-  associate_public_ip_address = true
-
-  # index starts at zero.
-  count = 2
-
-  user_data = data.template_file.app_init.rendered
-
-  # use counter to give it uniques tag name
-  tags = {
-    Name = "devops106_terraform_daniel_app_webserver_${count.index}"
-  }
-
-  connection {
-    type        = "ssh"
-    user        = "ubuntu"
-    host        = self.public_ip
-    private_key = file(var.private_key_file_path_var)
-  }
-}
-resource "aws_instance" "devops106_terraform_daniel_webserver2_app_tf" {
-  ami                    = var.ubuntu_20_04_ami_id_var
-  instance_type          = var.instance_type_var
-  key_name               = var.key_name_var
-  vpc_security_group_ids = [aws_security_group.devops106_terraform_daniel_sg_app_webserver_tf.id]
-
-  subnet_id                   = aws_subnet.devops106_terraform_daniel_subnet_app_webserver2_tf.id
-  associate_public_ip_address = true
-
-  # index starts at zero.
-  count = 2
-
-  user_data = data.template_file.app_init.rendered
-
-  # use counter to give it uniques tag name
-  tags = {
-    Name = "devops106_terraform_daniel_app_webserver2_${count.index}"
-  }
-
-  connection {
-    type        = "ssh"
-    user        = "ubuntu"
-    host        = self.public_ip
-    private_key = file(var.private_key_file_path_var)
-  }
-}
-
 
 data "template_file" "db_init" {
   template = file("./init-scripts/mongodb-install.sh")
@@ -447,17 +361,6 @@ resource "aws_alb_target_group" "devops106_terraform_daniel_tg_tf" {
   vpc_id      = local.vpc_id_var
 }
 
-resource "aws_alb_target_group_attachment" "devops106_terraform_daniel_tg_attach_tf" {
-  target_group_arn = aws_alb_target_group.devops106_terraform_daniel_tg_tf.arn
-  count            = length(aws_instance.devops106_terraform_daniel_webserver_app_tf)
-  target_id        = aws_instance.devops106_terraform_daniel_webserver_app_tf[count.index].id
-}
-
-resource "aws_alb_target_group_attachment" "devops106_terraform_daniel_tg_attach2_tf" {
-  target_group_arn = aws_alb_target_group.devops106_terraform_daniel_tg_tf.arn
-  count            = length(aws_instance.devops106_terraform_daniel_webserver2_app_tf)
-  target_id        = aws_instance.devops106_terraform_daniel_webserver2_app_tf[count.index].id
-}
 
 resource "aws_lb_listener" "devops106_terraform_daniel_lb_listener_tf" {
   load_balancer_arn = aws_lb.devops106_terraform_daniel_lb_tf.arn
