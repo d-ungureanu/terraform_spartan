@@ -18,6 +18,10 @@ variable "ubuntu_20_04_ami_id_var" {
   default = "ami-08ca3fed11864d6bb"
 }
 
+variable "ubuntu_20_04_docker_ami_id_var" {
+  default = "ami-0c36c885355cb6a49"
+}
+
 #Region name
 variable "region_var" {
   default = "eu-west-1"
