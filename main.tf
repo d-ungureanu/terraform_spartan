@@ -325,7 +325,7 @@ data "template_file" "app_init" {
 }
 
 resource "aws_instance" "devops106_terraform_daniel_webserver_app_tf" {
-  ami                    = var.ubuntu_20_04_ami_id_var
+  ami                    = var.ubuntu_20_04_docker_ami_id_var
   instance_type          = var.instance_type_var
   key_name               = var.key_name_var
   vpc_security_group_ids = [aws_security_group.devops106_terraform_daniel_sg_app_webserver_tf.id]
