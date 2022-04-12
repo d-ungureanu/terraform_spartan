@@ -290,29 +290,28 @@ resource "aws_security_group" "devops106_terraform_daniel_sg_db_server_tf" {
 }
 
 resource "aws_security_group" "devops106_terraform_daniel_sg_lb_tf" {
-    name = "devops106_terraform_daniel_sg_lb"
-    vpc_id = local.vpc_id_var
+  name   = "devops106_terraform_daniel_sg_lb"
+  vpc_id = local.vpc_id_var
 
-    ingress {
-        from_port = 0
-        to_port = 0
-        protocol = -1
-        cidr_blocks = ["0.0.0.0/0"]
-    }
+  ingress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
 
-    egress {
-      from_port = 0
-      to_port = 0
-      protocol = -1
-      cidr_blocks = ["0.0.0.0/0"]
-    }
+  egress {
+    from_port   = 0
+    to_port     = 0
+    protocol    = -1
+    cidr_blocks = ["0.0.0.0/0"]
+  }
 
-    tags = {
-      Name = "devops106_terraform_daniel_sg_lb"
-    }
+  tags = {
+    Name = "devops106_terraform_daniel_sg_lb"
+  }
 }
-
 
 
 data "template_file" "db_init" {
@@ -327,7 +326,7 @@ resource "aws_instance" "devops106_terraform_daniel_db_server_tf" {
 
   subnet_id                   = aws_subnet.devops106_terraform_daniel_subnet_db_server_tf.id
   associate_public_ip_address = true
-  tags = {
+  tags                        = {
     Name = "devops106_terraform_daniel_db_server"
   }
 
@@ -387,22 +386,22 @@ resource "aws_alb_target_group" "devops106_terraform_daniel_tg_tf" {
 
 resource "aws_lb_listener" "devops106_terraform_daniel_lb_listener_tf" {
   load_balancer_arn = aws_lb.devops106_terraform_daniel_lb_tf.arn
-  port = 80
-  protocol = "HTTP"
+  port              = 80
+  protocol          = "HTTP"
   default_action {
-    type = "forward"
+    type             = "forward"
     target_group_arn = aws_alb_target_group.devops106_terraform_daniel_tg_tf.arn
   }
 }
 
 resource "aws_autoscaling_group" "devops106_terraform_daniel_asg_tf" {
-  name = "devops106_terraform_daniel_asg"
-  health_check_type = "ELB"
+  name                      = "devops106_terraform_daniel_asg"
+  health_check_type         = "ELB"
   health_check_grace_period = 120
-  min_size = 1
-  desired_capacity = 2
-  max_size = 5
-  vpc_zone_identifier = [
+  min_size                  = 1
+  desired_capacity          = 2
+  max_size                  = 5
+  vpc_zone_identifier       = [
     aws_subnet.devops106_terraform_daniel_subnet_app_server_tf.id,
     aws_subnet.devops106_terraform_daniel_subnet_app_server2_tf.id
   ]
@@ -423,13 +422,13 @@ resource "aws_autoscaling_group" "devops106_terraform_daniel_asg_tf" {
 }
 
 resource "aws_autoscaling_policy" "devops106_terraform_daniel_asg_policy_tf" {
-  name = "devops106_terraform_daniel_asg_policy"
+  name                   = "devops106_terraform_daniel_asg_policy"
   autoscaling_group_name = aws_autoscaling_group.devops106_terraform_daniel_asg_tf.name
 
   policy_type = "TargetTrackingScaling"
 
   target_tracking_configuration {
-    predefined_metric_specification{
+    predefined_metric_specification {
       predefined_metric_type = "ASGAverageCPUUtilization"
     }
     target_value = 50.0
@@ -441,17 +440,17 @@ data "template_file" "app_init" {
 }
 
 resource "aws_launch_template" "devops106_terraform_daniel_lt_tf" {
-  name = "devops106_terraform_daniel_lt"
-  image_id = var.ubuntu_20_04_docker_ami_id_var
+  name          = "devops106_terraform_daniel_lt"
+  image_id      = var.ubuntu_20_04_docker_ami_id_var
   instance_type = var.instance_type_var
-  key_name = var.key_name_var
+  key_name      = var.key_name_var
 
 
   network_interfaces {
     associate_public_ip_address = true
-    subnet_id = aws_subnet.devops106_terraform_daniel_subnet_app_server_tf.id
-    security_groups = [aws_security_group.devops106_terraform_daniel_sg_app_server_tf.id]
-    delete_on_termination = true
+    subnet_id                   = aws_subnet.devops106_terraform_daniel_subnet_app_server_tf.id
+    security_groups             = [aws_security_group.devops106_terraform_daniel_sg_app_server_tf.id]
+    delete_on_termination       = true
   }
 
   user_data = base64_encode(data.template_file.app_init.rendered)
