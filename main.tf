@@ -371,3 +371,62 @@ resource "aws_lb_listener" "devops106_terraform_daniel_lb_listener_tf" {
     target_group_arn = aws_alb_target_group.devops106_terraform_daniel_tg_tf.arn
   }
 }
+
+resource "aws_autoscaling_group" "devops106_terraform_daniel_asg_tf" {
+  name = "devops106_terraform_daniel_asg"
+  health_check_type = "ELB"
+  health_check_grace_period = 120
+  min_size = 1
+  desired_capacity = 2
+  max_size = 5
+  vpc_zone_identifier = [
+    aws_subnet.devops106_terraform_daniel_subnet_app_webserver_tf.id,
+    aws_subnet.devops106_terraform_daniel_subnet_app_webserver2_tf.id
+  ]
+  target_group_arns = [aws_alb_target_group.devops106_terraform_daniel_tg_tf.arn]
+  launch_template {
+    id = "lt-0170f371f43ec9bf9"
+  }
+}
+
+resource "aws_autoscaling_policy" "devops106_terraform_daniel_asg_policy_tf" {
+  name = "devops106_terraform_daniel_asg_policy"
+  autoscaling_group_name = aws_autoscaling_group.devops106_terraform_daniel_asg_tf.name
+
+  policy_type = "TargetTrackingScaling"
+
+  target_tracking_configuration {
+    predefined_metric_specification{
+      predefined_metric_type = "ASGAverageCPUUtilization"
+    }
+    target_value = 50.0
+  }
+}
+
+data "template_file" "app_init" {
+  template = file("./init-scripts/docker-install.sh")
+}
+
+resource "aws_launch_template" "devops106_terraform_daniel_lt_tf" {
+  name = "devops106_terraform_daniel_lt"
+  image_id = "ami-0c36c885355cb6a49"
+  instance_type = "t2.micro"
+  key_name = var.key_name_var
+
+
+  network_interfaces {
+    associate_public_ip_address = true
+    subnet_id = aws_subnet.devops106_terraform_daniel_subnet_app_webserver_tf.id
+    security_groups = [aws_security_group.devops106_terraform_daniel_sg_app_webserver_tf.id]
+    delete_on_termination = true
+  }
+
+  user_data = base64_encode(data.template_file.app_init.rendered)
+
+  tag_specifications {
+    resource_type = "instance"
+    tags {
+      Name = "devops106_terraform_daniel_webserver"
+    }
+  }
+}
