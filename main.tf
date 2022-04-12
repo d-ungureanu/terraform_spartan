@@ -384,7 +384,7 @@ resource "aws_alb_target_group" "devops106_terraform_daniel_tg_tf" {
 }
 
 
-resource "aws_lb_listener" "devops106_terraform_daniel_lb_listener_tf" {
+resource "aws_alb_listener" "devops106_terraform_daniel_lb_listener_tf" {
   load_balancer_arn = aws_lb.devops106_terraform_daniel_lb_tf.arn
   port              = 80
   protocol          = "HTTP"
