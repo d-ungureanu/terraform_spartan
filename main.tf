@@ -336,6 +336,14 @@ resource "aws_route53_record" "devops106_terraform_daniel_dns_db_tf" {
   records = [aws_instance.devops106_terraform_daniel_webserver_db_tf.public_ip]
 }
 
+# need to add here dns records for each web server
+
+# resource "aws_route53_record" "devops106_terraform_daniel_webservers_tf" {
+#   zone_id = aws_route53_zone.devops106_terraform_daniel_dns_zone_tf.zone_id
+#   type = "A"
+#   name = "app"
+#   records = [aws_instance.devops106_terraform_daniel_]
+# }
 resource "aws_lb" "devops106_terraform_daniel_lb_tf" {
   name               = "devops106-terraform-daniel-lb"
   internal           = false
