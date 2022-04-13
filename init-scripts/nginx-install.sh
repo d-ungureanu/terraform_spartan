@@ -7,10 +7,10 @@ sudo mv /etc/nginx/sites-available/default .
 sudo rm /etc/nginx/sites-enabled/default
 sudo tee -a /etc/nginx/sites-available/spartan_web << END
 upstream spartan_servers {
-        server web1.dungureanu.devops106:5000;
-        server web2.dungureanu.devops106:5000;
-        server web3.dungureanu.devops106:5000;
-        server web4.dungureanu.devops106:5000;
+        server 52.50.242.89:5000;
+        server 52.31.100.232:5000;
+        server 34.253.130.151:5000;
+        server 54.154.65.137:5000;
 }
 
 server {

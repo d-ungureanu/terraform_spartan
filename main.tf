@@ -291,33 +291,33 @@ resource "aws_security_group" "devops106_terraform_daniel_sg_db_webserver_tf" {
 }
 
 
-#data "template_file" "proxy_init" {
-#  template = file("./init-scripts/nginx-install.sh")
-#}
-#
-#resource "aws_instance" "devops106_terraform_daniel_proxy_server_tf" {
-#  ami                    = var.ubuntu_20_04_ami_id_var
-#  instance_type          = var.instance_type_var
-#  key_name               = var.key_name_var
-#  vpc_security_group_ids = [aws_security_group.devops106_terraform_daniel_sg_app_webserver_tf.id]
-#
-#  subnet_id                   = aws_subnet.devops106_terraform_daniel_subnet_app_webserver_tf.id
-#  associate_public_ip_address = true
-#
-#
-#  user_data = data.template_file.proxy_init.rendered
-#
-#  tags = {
-#    Name = "devops106_terraform_daniel_proxy_server"
-#  }
-#
-#  connection {
-#    type        = "ssh"
-#    user        = "ubuntu"
-#    host        = self.public_ip
-#    private_key = file(var.private_key_file_path_var)
-#  }
-#}
+data "template_file" "proxy_init" {
+  template = file("./init-scripts/nginx-install.sh")
+}
+
+resource "aws_instance" "devops106_terraform_daniel_proxy_server_tf" {
+  ami                    = var.ubuntu_20_04_ami_id_var
+  instance_type          = var.instance_type_var
+  key_name               = var.key_name_var
+  vpc_security_group_ids = [aws_security_group.devops106_terraform_daniel_sg_app_webserver_tf.id]
+
+  subnet_id                   = aws_subnet.devops106_terraform_daniel_subnet_app_webserver_tf.id
+  associate_public_ip_address = true
+
+
+  user_data = data.template_file.proxy_init.rendered
+
+  tags = {
+    Name = "devops106_terraform_daniel_proxy_server"
+  }
+
+  connection {
+    type        = "ssh"
+    user        = "ubuntu"
+    host        = self.public_ip
+    private_key = file(var.private_key_file_path_var)
+  }
+}
 
 
 data "template_file" "app_init" {
